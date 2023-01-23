@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useMoralis } from "react-moralis";
 
-const ManulHeader = () => {
+export default function ManulHeader() {
   const {
     Moralis,
     account,
@@ -51,6 +51,4 @@ const ManulHeader = () => {
       )}
     </div>
   );
-};
-
-export default ManulHeader;
+}
