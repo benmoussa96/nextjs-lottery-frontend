@@ -12,6 +12,8 @@ interface contractAddressesInterface {
 
 export default function LotteryEntrance() {
   const [entranceFee, setEntranceFee] = useState("0");
+  const [numPlayers, setNumPlayers] = useState("0");
+  const [recentWinner, setRecentWinner] = useState("0");
 
   const { chainId: chainIdHex, isWeb3Enabled } = useMoralis();
   const chainId = parseInt(chainIdHex!);
@@ -35,14 +37,35 @@ export default function LotteryEntrance() {
     params: {},
   });
 
+  const { runContractFunction: getNumberOfPlayers } = useWeb3Contract({
+    abi,
+    contractAddress: raffleAddress!,
+    functionName: "getNumberOfPlayers",
+    params: {},
+  });
+
+  const { runContractFunction: getRecentWinner } = useWeb3Contract({
+    abi,
+    contractAddress: raffleAddress!,
+    functionName: "getRecentWinner",
+    params: {},
+  });
+
   const updateUi = async () => {
     const entranceFee = ((await getEntranceFee()) as BigNumber).toString();
     setEntranceFee(entranceFee);
+
+    const numPayers = ((await getNumberOfPlayers()) as BigNumber).toString();
+    setNumPlayers(numPayers);
+
+    const recentWinner = (await getRecentWinner()) as string;
+    setRecentWinner(recentWinner);
   };
 
   const handleSuccess = async (txn: ContractTransaction) => {
     await txn.wait(1);
     handleNewNotification();
+    updateUi();
   };
 
   const handleNewNotification = async () => {
@@ -75,6 +98,8 @@ export default function LotteryEntrance() {
             Enter Raffle
           </button>
           <div>Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH</div>
+          <div>Number Of Players: {numPlayers} </div>
+          <div> Recent Winner: {recentWinner} </div>
         </div>
       ) : (
         <div>No Raffle contract address detected on this network</div>
