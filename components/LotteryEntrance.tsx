@@ -56,14 +56,16 @@ export default function LotteryEntrance() {
   });
 
   const updateUi = async () => {
-    const entranceFee = ((await getEntranceFee()) as BigNumber).toString();
-    setEntranceFee(entranceFee);
+    if (raffleAddress) {
+      const entranceFee = ((await getEntranceFee()) as BigNumber).toString();
+      setEntranceFee(entranceFee);
 
-    const numPayers = ((await getNumberOfPlayers()) as BigNumber).toString();
-    setNumPlayers(numPayers);
+      const numPayers = ((await getNumberOfPlayers()) as BigNumber).toString();
+      setNumPlayers(numPayers);
 
-    const recentWinner = (await getRecentWinner()) as string;
-    setRecentWinner(recentWinner);
+      const recentWinner = (await getRecentWinner()) as string;
+      setRecentWinner(recentWinner);
+    }
   };
 
   const handleSuccess = async (txn: ContractTransaction) => {
@@ -84,7 +86,7 @@ export default function LotteryEntrance() {
 
   useEffect(() => {
     if (isWeb3Enabled) updateUi();
-  }, [isWeb3Enabled]);
+  }, [isWeb3Enabled, chainId]);
 
   return (
     <div className="p-5">
@@ -113,10 +115,10 @@ export default function LotteryEntrance() {
         </div>
       ) : (
         <div>
-          <div>Cannot enter raffle!</div>
-          <div>
-            No wallet is connecte or Raffle contract not available on this network.
-          </div>
+          <div className="font-bold">Cannot enter raffle!</div>
+          <div>Possible reasons:</div>
+          <div>1. Wallet is not connected</div>
+          <div>2. Raffle smart contract not available on the selected network</div>
         </div>
       )}
     </div>
