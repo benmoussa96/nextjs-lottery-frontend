@@ -1,0 +1,56 @@
+import React, { useEffect } from "react";
+import { useMoralis } from "react-moralis";
+
+const ManulHeader = () => {
+  const {
+    Moralis,
+    account,
+    isWeb3Enabled,
+    isWeb3EnableLoading,
+    enableWeb3,
+    deactivateWeb3,
+  } = useMoralis();
+
+  useEffect(() => {
+    if (isWeb3Enabled) return;
+    if (typeof window !== "undefined")
+      if (window.localStorage.getItem("connected")) enableWeb3();
+
+    console.log("useEffect()");
+    console.log(isWeb3Enabled);
+  }, [isWeb3Enabled]);
+
+  useEffect(() => {
+    Moralis.onAccountChanged((account) => {
+      console.log(`Acocunt changed to ${account}`);
+      if (account == null) {
+        window.localStorage.removeItem("connected");
+        deactivateWeb3();
+        console.log("null account found");
+      }
+    });
+  }, []);
+
+  return (
+    <div>
+      {account ? (
+        <div>
+          Connected to {account.slice(0, 5)}...{account.slice(account.length - 4)}
+        </div>
+      ) : (
+        <button
+          onClick={async () => {
+            await enableWeb3();
+            if (typeof window !== "undefined")
+              window.localStorage.setItem("connected", "injected");
+          }}
+          disabled={isWeb3EnableLoading}
+        >
+          Connect
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default ManulHeader;
