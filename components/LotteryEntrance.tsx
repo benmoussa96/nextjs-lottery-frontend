@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { ethers, BigNumber } from "ethers";
+import { ethers, BigNumber, ContractTransaction } from "ethers";
 import { useWeb3Contract } from "react-moralis";
 import { useMoralis } from "react-moralis";
+import { useNotification, Bell } from "web3uikit";
 
 import { abi, contractAddresses } from "../constants";
 
@@ -17,12 +18,14 @@ export default function LotteryEntrance() {
   const addresses: contractAddressesInterface = contractAddresses;
   const raffleAddress = chainId in addresses ? addresses[chainId][0] : null;
 
+  const dispatch = useNotification();
+
   const { runContractFunction: enterRaffle } = useWeb3Contract({
     abi,
     contractAddress: raffleAddress!,
     functionName: "enterRaffle",
     params: {},
-    // msgValue: 0,
+    msgValue: entranceFee,
   });
 
   const { runContractFunction: getEntranceFee } = useWeb3Contract({
@@ -37,6 +40,21 @@ export default function LotteryEntrance() {
     setEntranceFee(entranceFee);
   };
 
+  const handleSuccess = async (txn: ContractTransaction) => {
+    await txn.wait(1);
+    handleNewNotification();
+  };
+
+  const handleNewNotification = async () => {
+    dispatch({
+      type: "info",
+      message: "Transaction Complete!",
+      title: "Notification",
+      position: "topR",
+      icon: <Bell fontSize={20} />,
+    });
+  };
+
   useEffect(() => {
     if (isWeb3Enabled) updateUi();
   }, [isWeb3Enabled]);
@@ -45,7 +63,19 @@ export default function LotteryEntrance() {
     <div>
       LotteryEntrance
       {raffleAddress ? (
-        <div>Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH</div>
+        <div>
+          <button
+            onClick={async () =>
+              await enterRaffle({
+                onSuccess: (txn) => handleSuccess(txn as ContractTransaction),
+                onError: (error) => console.log(error),
+              })
+            }
+          >
+            Enter Raffle
+          </button>
+          <div>Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH</div>
+        </div>
       ) : (
         <div>No Raffle contract address detected on this network</div>
       )}
