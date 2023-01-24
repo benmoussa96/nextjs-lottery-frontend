@@ -76,7 +76,7 @@ export default function LotteryEntrance() {
 
   const handleNewNotification = async () => {
     dispatch({
-      type: "info",
+      type: "success",
       message: "Transaction Complete!",
       title: "Notification",
       position: "topR",
