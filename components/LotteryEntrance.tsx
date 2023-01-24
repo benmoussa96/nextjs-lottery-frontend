@@ -77,8 +77,8 @@ export default function LotteryEntrance() {
   const handleNewNotification = async () => {
     dispatch({
       type: "success",
-      message: "Transaction Complete!",
-      title: "Notification",
+      message: "Raffle Entered!",
+      title: "Transaction Notification",
       position: "topR",
       icon: <Bell fontSize={20} />,
     });
@@ -92,6 +92,7 @@ export default function LotteryEntrance() {
     <div className="p-5">
       {raffleAddress ? (
         <div>
+          <h1 className="text-2xl">Enter the lottery</h1>
           <button
             className="bg-blue-500 hover:bg-blue-700 disabled:bg-blue-300 text-white fron-bold py-2 px-4 rounded ml-auto w-32 flex justify-center float-right"
             onClick={async () =>
@@ -108,7 +109,6 @@ export default function LotteryEntrance() {
               "Enter Raffle"
             )}
           </button>
-          <h1 className="text-2xl">Enter the lottery</h1>
           <div>Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH</div>
           <div>Number Of Players: {numPlayers}</div>
           <div>Recent Winner: {recentWinner}</div>
