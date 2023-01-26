@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useMoralis } from "react-moralis";
 
-export default function ManulHeader() {
+export default function HeaderFromScratch() {
   const {
     Moralis,
     account,

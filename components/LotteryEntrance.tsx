@@ -6,7 +6,7 @@ import { useNotification, Bell } from "web3uikit";
 
 import { abi, contractAddresses } from "../constants";
 
-interface contractAddressesInterface {
+interface ContractAddressesInterface {
   [key: string]: string[];
 }
 
@@ -17,7 +17,7 @@ export default function LotteryEntrance() {
 
   const { chainId: chainIdHex, isWeb3Enabled } = useMoralis();
   const chainId = parseInt(chainIdHex!);
-  const addresses: contractAddressesInterface = contractAddresses;
+  const addresses: ContractAddressesInterface = contractAddresses;
   const raffleAddress = chainId in addresses ? addresses[chainId][0] : null;
 
   const dispatch = useNotification();
